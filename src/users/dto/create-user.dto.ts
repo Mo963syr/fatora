@@ -9,7 +9,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   birthDate: string;
 
-  @IsIn(['أمي', 'إعدادي', 'ثانوي', 'جامعي']) // ✅ تحديث القيم
+  @IsIn(['أمي','ابتدائي', 'إعدادي', 'ثانوي', 'جامعي']) // ✅ تحديث القيم
   studyLevel: string;
 
   @IsOptional()

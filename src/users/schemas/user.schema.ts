@@ -12,7 +12,7 @@ export class User {
   birthDate: Date;
 
   // ✅ التعديل: التخزين بالعربي
-  @Prop({ required: true, enum: ['أمي', 'إعدادي', 'ثانوي', 'جامعي'] })
+  @Prop({ required: true, enum: ['أمي','ابتدائي', 'إعدادي', 'ثانوي', 'جامعي'] })
   studyLevel: string;
 
   @Prop()
