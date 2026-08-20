@@ -11,6 +11,9 @@ export class User {
   @Prop({ required: true })
   birthDate: Date;
 
+
+  @Prop({ required: true, enum: ['ذكر', 'أنثى'] })
+  gender: string;
   // ✅ التعديل: التخزين بالعربي
   @Prop({ required: true, enum: ['أمي','ابتدائي', 'إعدادي', 'ثانوي', 'جامعي'] })
   studyLevel: string;

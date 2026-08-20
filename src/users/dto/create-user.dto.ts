@@ -9,6 +9,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   birthDate: string;
 
+  @IsIn(['ذكر', 'أنثى'])
+  gender: string;
+
   @IsIn(['أمي','ابتدائي', 'إعدادي', 'ثانوي', 'جامعي']) // ✅ تحديث القيم
   studyLevel: string;
 

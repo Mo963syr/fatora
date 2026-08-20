@@ -20,11 +20,14 @@ export class UsersController {
           sequentialNumber: user.sequentialNumber, // ✅ إرسال الرقم التسلسلي للواجهة
         },
       };
-    } catch (error) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'حدث خطأ أثناء التسجيل';
+
       return {
         success: false,
         message: 'حدث خطأ أثناء التسجيل. تأكد من أن رقم الهاتف غير مكرر',
-        error: error.message,
+        error: message,
       };
     }
   }
