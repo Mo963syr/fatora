@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>نموذج التسجيل - دورة فقه المسلم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #eef2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            margin: 0;
+        }
+        .form-container {
+            background: #ffffff;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            padding: 28px 20px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #f0f4f9;
+            padding-bottom: 16px;
+        }
+        .header h1 {
+            font-size: 22px;
+            color: #1a2b4a;
+            font-weight: 700;
+        }
+        .header p {
+            color: #6b7a8f;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* ===== STEP INDICATOR ===== */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            background: #dce3ec;
+            border-radius: 50%;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+        .step-dot.active {
+            background: #1a73e8;
+            transform: scale(1.3);
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.2);
+        }
+        .step-dot.completed {
+            background: #34a853;
+        }
+
+        /* ===== FORM STEPS ===== */
+        .form-step {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+        .form-step.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== FORM GROUPS ===== */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1f2a44;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-group label .required {
+            color: #d93025;
+            margin-right: 3px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 14px;
+            border: 1.5px solid #dadce0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Tajawal', sans-serif;
+            background: #fafbfc;
+            transition: 0.25s;
+            color: #1f2a44;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+            background: #fff;
+        }
+        /* تحسين شكل الـ select في الموبايل */
+        .form-group select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a8f' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 14px center;
+            padding-left: 36px;
+        }
+        .form-group .hint {
+            font-size: 12px;
+            color: #6b7a8f;
+            margin-top: 4px;
+        }
+
+        /* ===== CONDITIONAL FIELDS ===== */
+        .conditional-field {
+            display: none;
+            background: #f8faff;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border-right: 4px solid #1a73e8;
+            margin-top: 8px;
+        }
+        .conditional-field.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .conditional-field .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 100px;
+            text-align: center;
+            touch-action: manipulation;
+        }
+        .btn-primary {
+            background: #1a73e8;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+        .btn-primary:hover {
+            background: #1557b0;
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+        .btn-secondary {
+            background: #e8edf4;
+            color: #1f2a44;
+        }
+        .btn-secondary:hover {
+            background: #d5dce6;
+        }
+        .btn-secondary:active {
+            transform: scale(0.97);
+        }
+        .btn-success {
+            background: #34a853;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(52, 168, 83, 0.3);
+        }
+        .btn-success:hover {
+            background: #2d9249;
+            transform: translateY(-2px);
+        }
+        .btn-success:active {
+            transform: scale(0.97);
+        }
+
+        /* ===== SUCCESS MESSAGE ===== */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        .success-message .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .success-message h2 {
+            font-size: 22px;
+            color: #1a2b4a;
+            margin-bottom: 6px;
+        }
+        .success-message p {
+            font-size: 14px;
+            color: #4a5a6e;
+        }
+
+        .password-box {
+            background: #f1f8fe;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px dashed #1a73e8;
+            margin: 12px auto;
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a73e8;
+            direction: ltr;
+            text-align: center;
+            max-width: 100%;
+            word-break: break-all;
+        }
+
+        /* ===== QR CODE ===== */
+        .qr-code-box {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px solid #e8edf4;
+            margin: 16px auto;
+            display: inline-block;
+            width: 100%;
+            max-width: 320px;
+        }
+        .qr-code-box img {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            height: auto;
+            max-width: 250px;
+            aspect-ratio: 1/1;
+        }
+
+        /* ===== ERROR ===== */
+        .error-message {
+            background: #fce8e6;
+            color: #d93025;
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-top: 14px;
+            display: none;
+            border-right: 4px solid #d93025;
+            font-size: 14px;
+        }
+        .error-message.show {
+            display: block;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            .form-container {
+                padding: 20px 14px;
+                border-radius: 18px;
+            }
+            .header h1 {
+                font-size: 19px;
+            }
+            .header p {
+                font-size: 12px;
+            }
+            .form-group input,
+            .form-group select {
+                padding: 13px 12px;
+                font-size: 15px;
+                border-radius: 10px;
+            }
+            .form-group label {
+                font-size: 13px;
+            }
+            .btn {
+                padding: 13px 16px;
+                font-size: 14px;
+                min-width: 80px;
+            }
+            .btn-group {
+                gap: 8px;
+                margin-top: 18px;
+            }
+            .step-dot {
+                width: 8px;
+                height: 8px;
+            }
+            .qr-code-box {
+                padding: 12px;
+                max-width: 280px;
+            }
+            .qr-code-box img {
+                max-width: 200px;
+            }
+            .password-box {
+                font-size: 15px;
+                padding: 12px;
+            }
+            .success-message h2 {
+                font-size: 19px;
+            }
+            .conditional-field {
+                padding: 12px 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .form-container {
+                padding: 16px 10px;
+                border-radius: 14px;
+            }
+            .header h1 {
+                font-size: 17px;
+            }
+            .form-group input,
+            .form-group select {
+                padding: 11px 10px;
+                font-size: 14px;
+            }
+            .btn {
+                padding: 11px 12px;
+                font-size: 13px;
+                min-width: 60px;
+            }
+            .qr-code-box img {
+                max-width: 160px;
+            }
+            .qr-code-box {
+                max-width: 220px;
+                padding: 10px;
+            }
+            .password-box {
+                font-size: 13px;
+                padding: 10px;
+            }
+        }
+
+        /* ===== تحسين زر النسخ والتحميل ===== */
+        #copyPasswordBtn {
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+        #copyPasswordBtn:hover {
+            transform: scale(1.05);
+        }
+        #copyPasswordBtn:active {
+            transform: scale(0.95);
+        }
+        #downloadQRBtn {
+            transition: all 0.2s;
+            font-weight: 600;
+            touch-action: manipulation;
+        }
+        #downloadQRBtn:hover {
+            background: #d5dce6;
+            transform: scale(1.02);
+        }
+        #downloadQRBtn:active {
+            transform: scale(0.97);
+        }
+
+        /* ===== حاوية النتيجة ===== */
+        .result-card {
+            background: #f8faff;
+            padding: 16px 14px;
+            border-radius: 16px;
+            margin: 16px 0;
+        }
+        .result-card .student-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a2b4a;
+            margin-top: 12px;
+        }
+        .result-card .seq-number {
+            font-size: 14px;
+            color: #6b7a8f;
+            margin-top: 4px;
+        }
+        .result-card .seq-number span {
+            font-weight: 700;
+            color: #1a73e8;
+        }
+
+        /* ===== حاوية كلمة المرور ===== */
+        .password-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .password-wrapper .password-box {
+            margin: 0;
+            flex: 1;
+            min-width: 150px;
+        }
+        .password-wrapper .btn {
+            flex: 0 0 auto;
+            padding: 12px 18px;
+            min-width: 60px;
+        }
+
+        @media (max-width: 450px) {
+            .password-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .password-wrapper .password-box {
+                min-width: unset;
+            }
+            .password-wrapper .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container" id="app">
+        <div class="header">
+            <h1> دورة فقه المسلم 📚</h1>
+            <p>جامع البشير · يرجى تعبئة جميع الحقول المطلوبة</p>
+        </div>
+
+        <!-- Step Dots -->
+        <div class="step-indicator" id="stepDots">
+            <span class="step-dot active"></span>
+            <span class="step-dot"></span>
+            <span class="step-dot"></span>
+            <span class="step-dot"></span>
+        </div>
+
+        <!-- ===== FORM ===== -->
+        <form id="multiStepForm" novalidate>
+            <!-- STEP 1 -->
+            <div class="form-step active" data-step="1">
+                <div class="form-group">
+                    <label>الاسم الثلاثي <span class="required">*</span></label>
+                    <input type="text" id="fullName" placeholder="مثال: أحمد محمد علي" required>
+                </div>
+                <div class="form-group">
+                    <label>الجنس <span class="required">*</span></label>
+                    <select id="gender" required>
+                        <option value="">-- اختر --</option>
+                        <option value="ذكر">ذكر</option>
+                        <option value="أنثى">أنثى</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>المواليد <span class="required">*</span></label>
+                    <input type="date" id="birthDate" required>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" onclick="nextStep(2)">التالي →</button>
+                </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="form-step" data-step="2">
+                <div class="form-group">
+                    <label>الدراسة <span class="required">*</span></label>
+                    <select id="studyLevel" required onchange="toggleStudyFields()">
+                        <option value="">-- اختر --</option>
+                        <option value="أمي">أمي</option>
+                        <option value="ابتدائي">ابتدائي</option>
+                        <option value="إعدادي">إعدادي</option>
+                        <option value="ثانوي">ثانوي</option>
+                        <option value="جامعي">جامعي</option>
+                    </select>
+                </div>
+
+                <div class="conditional-field" id="secondaryField">
+                    <div class="form-group">
+                        <label>الدراسة الحالية <span class="required">*</span></label>
+                        <select id="secondaryTrack">
+                            <option value="">-- اختر --</option>
+                            <option value="علمي">علمي</option>
+                            <option value="أدبي">أدبي</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="conditional-field" id="specialtyField">
+                    <div class="form-group">
+                        <label>ما الاختصاص <span class="required">*</span></label>
+                        <input type="text" id="specialty" placeholder="مثال: طب، هندسة، آداب...">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(1)">→ رجوع</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(3)">التالي →</button>
+                </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="form-step" data-step="3">
+                <div class="form-group">
+                    <label>الحالة الوظيفية <span class="required">*</span></label>
+                    <select id="workStatus" required onchange="toggleWorkField()">
+                        <option value="">-- اختر --</option>
+                        <option value="لا أعمل">لا أعمل</option>
+                        <option value="لدي عمل">لدي عمل</option>
+                    </select>
+                </div>
+
+                <div class="conditional-field" id="workTypeField">
+                    <div class="form-group">
+                        <label>نوع العمل <span class="required">*</span></label>
+                        <input type="text" id="workType" placeholder="مثال: مهندس، طبيب، معلم...">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(2)">→ رجوع</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep(4)">التالي →</button>
+                </div>
+            </div>
+
+            <!-- STEP 4 -->
+            <div class="form-step" data-step="4">
+                <div class="form-group">
+                    <label>عنوان السكن <span class="required">*</span></label>
+                    <input type="text" id="address" placeholder="المدينة، الحي، الشارع" required>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف (واتساب) <span class="required">*</span></label>
+                    <input type="tel" id="phone" placeholder="05xxxxxxxx" required>
+                    <div class="hint">سيتم استخدامه للتواصل وسيكون جزءاً من كلمة المرور الخاصة بك.</div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(3)">→ رجوع</button>
+                    <button type="button" class="btn btn-success" onclick="submitForm()">إرسال النموذج ✅</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- ===== SUCCESS MESSAGE ===== -->
+        <div class="success-message" id="successMessage">
+            <div class="icon">✅</div>
+            <h2>تم التسجيل بنجاح!</h2>
+            <p>تم حفظ بياناتك في قاعدة البيانات.</p>
+            <p>قم بحفظ الباركود لتسجيل الحضور عند قدومك للدورة</p>
+
+            <div class="result-card">
+                <div class="qr-code-box" id="qrCodeContainer">
+                    <img id="qrCodeImage" src="" alt="الباركود الخاص بك">
+                </div>
+
+                <div class="student-name" id="studentNameDisplay">---</div>
+                <div class="seq-number">
+                    الرقم التسلسلي: <span id="seqNumberDisplay">---</span>
+                </div>
+
+                <button id="downloadQRBtn" class="btn btn-secondary" style="width:100%; margin-top:12px;" onclick="downloadQRCode()">
+                     تحميل الباركود كصورة ⬇️ 
+                </button>
+                <!-- <p style="color:#6b7a8f; font-size:13px; margin-top:8px;">امسح الباركود للوصول إلى بياناتك أو احفظه كمرجع.</p> -->
+            </div>
+
+            <p style="font-weight:500; margin-top:12px;">كلمة المرور الخاصة بك (لتسجيل الدخول الى التطبيق مستقبلا) احفظها بمكان آمن:</p>
+            <div class="password-wrapper">
+                <div class="password-box" id="generatedPassword">---</div>
+                <button id="copyPasswordBtn" class="btn btn-primary" onclick="copyPassword()"> نسخ 📋</button>
+            </div>
+            <p style="color:#6b7a8f; font-size:13px; margin-top:6px;">كلمة المرور هي رقم هاتفك + سنة ميلادك (مثال: 05xxxxxxxx2000).</p>
+
+            <button class="btn btn-primary" style="margin-top:16px; width:100%;" onclick="location.reload()">تسجيل جديد</button>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <script>
+        // ===== STEP MANAGEMENT =====
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function updateDots(step) {
+            const dots = document.querySelectorAll('.step-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index + 1 === step) dot.classList.add('active');
+                else if (index + 1 < step) dot.classList.add('completed');
+            });
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+            const target = document.querySelector(`.form-step[data-step="${step}"]`);
+            if (target) target.classList.add('active');
+            updateDots(step);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function nextStep(step) {
+            const currentStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+            const inputs = currentStepEl.querySelectorAll('input[required], select[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value.trim()) { input.style.borderColor = '#d93025';
+                    valid = false; } else { input.style.borderColor = '#dadce0'; }
+            });
+
+            const studyLevel = document.getElementById('studyLevel').value;
+            if (studyLevel === 'ثانوي') {
+                const track = document.getElementById('secondaryTrack');
+                if (!track.value) { track.style.borderColor = '#d93025';
+                    valid = false; } else track.style.borderColor = '#dadce0';
+            }
+            if (studyLevel === 'جامعي') {
+                const spec = document.getElementById('specialty');
+                if (!spec.value.trim()) { spec.style.borderColor = '#d93025';
+                    valid = false; } else spec.style.borderColor = '#dadce0';
+            }
+            const workStatus = document.getElementById('workStatus').value;
+            if (workStatus === 'لدي عمل') {
+                const workType = document.getElementById('workType');
+                if (!workType.value.trim()) { workType.style.borderColor = '#d93025';
+                    valid = false; } else workType.style.borderColor = '#dadce0';
+            }
+
+            if (!valid) {
+                document.getElementById('errorMessage').innerText = 'يرجى تعبئة جميع الحقول المطلوبة (التي تحمل علامة *) قبل المتابعة.';
+                document.getElementById('errorMessage').classList.add('show');
+                return;
+            }
+            if (step > totalSteps) return;
+            currentStep = step;
+            showStep(step);
+        }
+
+        function prevStep(step) {
+            currentStep = step;
+            showStep(step);
+        }
+
+        function toggleStudyFields() {
+            const val = document.getElementById('studyLevel').value;
+            document.getElementById('secondaryField').classList.toggle('show', val === 'ثانوي');
+            document.getElementById('specialtyField').classList.toggle('show', val === 'جامعي');
+            document.getElementById('secondaryTrack').style.borderColor = '#dadce0';
+            document.getElementById('specialty').style.borderColor = '#dadce0';
+        }
+
+        function toggleWorkField() {
+            const val = document.getElementById('workStatus').value;
+            document.getElementById('workTypeField').classList.toggle('show', val === 'لدي عمل');
+            document.getElementById('workType').style.borderColor = '#dadce0';
+        }
+
+        // ===== SUBMIT FORM =====
+        async function submitForm() {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.classList.remove('show');
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const gender = document.getElementById('gender').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const studyLevel = document.getElementById('studyLevel').value;
+            const secondaryTrack = document.getElementById('secondaryTrack').value;
+            const specialty = document.getElementById('specialty').value.trim();
+            const workStatus = document.getElementById('workStatus').value;
+            const workType = document.getElementById('workType').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!fullName || !gender || !birthDate || !studyLevel || !workStatus || !address || !phone) {
+                errorDiv.innerText = 'جميع الحقول الأساسية مطلوبة. الرجاء التأكد.';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            const payload = { fullName, birthDate, gender, studyLevel, workStatus, address, phone };
+            if (studyLevel === 'ثانوي') payload.secondaryTrack = secondaryTrack;
+            if (studyLevel === 'جامعي') payload.specialty = specialty;
+            if (workStatus === 'لدي عمل') payload.workType = workType;
+
+            const submitBtn = document.querySelector('.btn-success');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = '⏳ جاري الإرسال...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('https://fatora-86dz.onrender.com/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('multiStepForm').style.display = 'none';
+                    document.querySelector('.step-indicator').style.display = 'none';
+
+                    const seqNum = result.data.sequentialNumber;
+                    const studentName = result.data.fullName;
+                    const password = result.data.password;
+
+                    document.getElementById('studentNameDisplay').innerText = studentName;
+                    document.getElementById('seqNumberDisplay').innerText = seqNum;
+                    document.getElementById('generatedPassword').innerText = password;
+
+                    // QR Code - الرقم التسلسلي فقط
+                    const qrCodeUrl =
+                        `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${seqNum}`;
+                    document.getElementById('qrCodeImage').src = qrCodeUrl;
+
+                    document.getElementById('successMessage').classList.add('show');
+                } else {
+                    errorDiv.innerText = result.message || 'حدث خطأ في الخادم.';
+                    errorDiv.classList.add('show');
+                }
+            } catch (error) {
+                errorDiv.innerText = 'تعذر الاتصال بالخادم. تأكد من تشغيل السيرفر (NestJS) على المنفذ 3000.';
+                errorDiv.classList.add('show');
+            } finally {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // ===== COPY PASSWORD =====
+        function copyPassword() {
+            const passwordText = document.getElementById('generatedPassword').innerText;
+            if (passwordText === '---' || !passwordText) {
+                alert('لا توجد كلمة مرور لنسخها!');
+                return;
+            }
+
+            navigator.clipboard.writeText(passwordText)
+                .then(() => {
+                    const btn = document.getElementById('copyPasswordBtn');
+                    const originalText = btn.innerText;
+                    btn.innerText = ' تم النسخ! ✅';
+                    setTimeout(() => { btn.innerText = originalText; }, 2000);
+                })
+                .catch(() => {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = passwordText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('تم نسخ كلمة المرور!');
+                });
+        }
+
+        // ===== DOWNLOAD QR CODE =====
+        function downloadQRCode() {
+            const img = document.getElementById('qrCodeImage');
+            if (!img.src || img.src === '') {
+                alert('الباركود غير متاح للتحميل!');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 600;
+            canvas.width = size;
+            canvas.height = size + 120;
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const image = new Image();
+            image.crossOrigin = 'anonymous';
+            image.src = img.src;
+
+            image.onload = function() {
+                const margin = 30;
+                const drawSize = size - (margin * 2);
+                ctx.drawImage(image, margin, margin, drawSize, drawSize);
+
+                const studentName = document.getElementById('studentNameDisplay').innerText;
+                const seqNumber = document.getElementById('seqNumberDisplay').innerText;
+
+                ctx.fillStyle = '#1a2b4a';
+                ctx.font = 'bold 32px Tajawal, Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(studentName, size / 2, size + 40);
+
+                ctx.font = '24px Tajawal, Arial';
+                ctx.fillStyle = '#6b7a8f';
+                ctx.fillText(`الرقم التسلسلي: ${seqNumber}`, size / 2, size + 85);
+
+                const link = document.createElement('a');
+                link.download = `QR_${studentName}_${seqNumber}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+            };
+
+            image.onerror = function() {
+                alert('حدث خطأ أثناء تحميل الصورة. حاول مجدداً.');
+            };
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(1);
+            toggleStudyFields();
+            toggleWorkField();
+        });
+    </script>
+
+</body>
+</html>
